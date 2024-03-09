@@ -1,0 +1,12 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="${LOGGING_ROOT_LEVEL:-WARN}">
+        <appender-ref ref="STDOUT" />
+    </root>
+    <logger name="ru.antonmarin.autoget" level="${LOGGING_DOMAIN_ROOT_LEVEL:-DEBUG}"/>
+</configuration>

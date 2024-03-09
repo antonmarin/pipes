@@ -1,0 +1,7 @@
+.env*
+config.yml
+.idea/
+
+# gradle in root and modules
+.gradle/
+build/
