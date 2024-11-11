@@ -15,9 +15,13 @@ class PlexDiscoveryClient(
 
     fun getWatchListTitles(): List<String> {
         val watchListMap = xmlReader.read(URL("$WATCH_LIST_URL?X-Plex-Token=$token"), Map::class)
+        val directoryKey = "Directory"
+        if (!watchListMap.containsKey(directoryKey)) {
+            logger.warn("Received unexpected watchlist: $watchListMap")
+        }
 
         @Suppress("UNCHECKED_CAST")
-        val directories = (watchListMap["Directory"] as List<Map<String, String>>).mapNotNull {
+        val directories = (watchListMap[directoryKey] as List<Map<String, String>>).mapNotNull {
             when (val result = mapToDirectory(it)) {
                 is Either.Right -> result.value
                 is Either.Left -> {
