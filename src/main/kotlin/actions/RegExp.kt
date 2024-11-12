@@ -1,5 +1,6 @@
 package ru.antonmarin.autoget.actions
 
+import org.slf4j.LoggerFactory
 import ru.antonmarin.autoget.Action
 import ru.antonmarin.autoget.Entry
 import kotlin.collections.List
@@ -16,6 +17,8 @@ class RegExp(
                 val value = property.getValue(it, property) ?: return@filter false
 
                 anyExpr.any { regex -> regex.containsMatchIn(value) }
+            }.also {
+                logger.debug("Filtered values: {}", it.map { "\n" + property.getValue(it, property)!!.replace("\\s+".toRegex(), " ") })
             }
 
             Action.REJECT -> entries.filterNot {
@@ -29,5 +32,9 @@ class RegExp(
     enum class Action {
         ACCEPT,
         REJECT,
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(RegExp::class.java)
     }
 }

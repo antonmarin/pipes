@@ -13,6 +13,8 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.charset.StandardCharsets
+import kotlin.reflect.KClass
+
 
 class TvmazeClient(@Suppress("unused") private val httpClient: HttpClient) : AkasProvider {
     private val jsonMapper = JsonMapper().apply {
@@ -23,26 +25,25 @@ class TvmazeClient(@Suppress("unused") private val httpClient: HttpClient) : Aka
 
     override fun getAkas(input: String): List<String> {
         val inputUrl = urlEncode(input)
-        val request = HttpRequest.newBuilder()
-            .uri(URI("https://api.tvmaze.com/singlesearch/shows?q=$inputUrl&embed=akas"))
-            .build()
-
-        logger.trace("Sending request {}", request)
-        val response = httpClient.send(
-            request, HttpResponse.BodyHandlers.ofString()
-        )
-        logger.trace("Received response {} with body\n{}", response, response.body())
-
-        val res = jsonMapper.readValue(response.body(), SingleSearchResponse::class.java)
+        val res = singleSearchResponse(inputUrl, SingleSearchResponse::class)
         if (res == null) logger.trace("$input not found in database")
+
         return res?.embedded?.akas?.map { it.name } ?: emptyList()
     }
 
-    private fun urlEncode(string: String?): String? = URLEncoder.encode(string, StandardCharsets.UTF_8)
+    private fun urlEncode(string: String): String = URLEncoder.encode(string, StandardCharsets.UTF_8)
 
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(TvmazeClient::class.java)
+    private fun <T : Any> singleSearchResponse(
+        inputUrl: String,
+        type: KClass<T>,
+    ): T? {
+        val request = HttpRequest.newBuilder()
+            .uri(URI("$TVMAZE_BASE/singlesearch/shows?q=$inputUrl&embed=akas"))
+            .build()
+        logger.trace("Sending request {}", request)
+        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+        logger.debug("Received response {} with body\n{}", response, response.body())
+        return jsonMapper.readValue(response.body(), type.java)
     }
 
     data class SingleSearchResponse(
@@ -57,4 +58,9 @@ class TvmazeClient(@Suppress("unused") private val httpClient: HttpClient) : Aka
     data class Aka(
         val name: String,
     )
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(TvmazeClient::class.java)
+        private const val TVMAZE_BASE = "https://api.tvmaze.com"
+    }
 }
