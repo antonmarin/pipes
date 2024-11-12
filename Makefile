@@ -42,7 +42,7 @@ build: clear #? build image
 		-t "$(DOCKER_TAG_WIP)" .; \
 	$(MAKE) clear;
 run: #? run once latest wip image
-	docker run --rm --env "LOGGING_DOMAIN_ROOT_LEVEL=DEBUG" "$(DOCKER_TAG_WIP)" --once
+	docker run --rm --env-file=.env --env "LOGGING_DOMAIN_ROOT_LEVEL=DEBUG" "$(DOCKER_TAG_WIP)" --once
 
 publish: PUBLISH_DATE:=$(shell date -I date)
 publish: #? publish image to deploy to server
