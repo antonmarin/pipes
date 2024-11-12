@@ -1,8 +1,8 @@
 package ru.antonmarin.autoget.infra.plex
 
-import org.slf4j.LoggerFactory
+import com.fasterxml.jackson.annotation.JsonMerge
+import com.fasterxml.jackson.annotation.JsonProperty
 import ru.antonmarin.autoget.actions.TitlesProvider
-import ru.antonmarin.autoget.domain.Either
 import ru.antonmarin.autoget.infra.xml.JacksonReader
 import java.net.URL
 import java.net.http.HttpClient
@@ -14,44 +14,34 @@ class PlexDiscoveryClient(
     private val xmlReader = JacksonReader(httpClient)
 
     fun getWatchListTitles(): List<String> {
-        val watchListMap = xmlReader.read(URL("$WATCH_LIST_URL?X-Plex-Token=$token"), Map::class)
-        val directoryKey = "Directory"
-        if (!watchListMap.containsKey(directoryKey)) {
-            logger.warn("Received unexpected watchlist: $watchListMap")
-        }
+        val watchListMap = xmlReader.read(URL("$WATCH_LIST_URL?X-Plex-Token=$token"), WatchList::class)
 
-        @Suppress("UNCHECKED_CAST")
-        val directories = (watchListMap[directoryKey] as List<Map<String, String>>).mapNotNull {
-            when (val result = mapToDirectory(it)) {
-                is Either.Right -> result.value
-                is Either.Left -> {
-                    logger.warn("Failed mapping Directory: ${result.value}")
-                    null
-                }
-            }
-        }
-
-        return directories.map { it.title }
-    }
-
-    private fun mapToDirectory(directoryMap: Map<String, String>): Either<ErrorMappingDirectory, Directory> {
-        return Directory(
-            title = directoryMap["title"] ?: return Either.Left(ErrorMappingDirectory.NO_TITLE),
-        ).let { Either.Right(it) }
-    }
-
-    enum class ErrorMappingDirectory {
-        NO_TITLE,
+        return watchListMap.directories.flatMap { listOfNotNull(it.title, it.originalTitle) }
     }
 
     override fun getTitles(): List<String> = getWatchListTitles()
 
     companion object {
-        private val logger = LoggerFactory.getLogger(PlexDiscoveryClient::class.java)
         private const val WATCH_LIST_URL = "https://discover.provider.plex.tv/library/sections/watchlist/all"
     }
 
     data class Directory(
         val title: String,
+        val originalTitle: String?,
+        val slug: String,
+        val art: URL,
+        val banner: URL,
+        val thumb: URL,
+        val publicPagesURL: URL,
+        val type: String,
+    )
+
+    data class WatchList(
+        val totalSize: Int,
+        val offset: Int,
+        val size: Int,
+        @JsonProperty("Directory")
+        @JsonMerge
+        val directories: List<Directory>,
     )
 }

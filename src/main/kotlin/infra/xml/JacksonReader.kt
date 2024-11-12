@@ -17,11 +17,13 @@ import kotlin.reflect.KClass
 class JacksonReader(
     private val httpClient: HttpClient = HttpClient.newBuilder().build(),
 ) : XmlReader {
-    private val mapper: ObjectMapper = XmlMapper().apply {
-        registerKotlinModule()
-        registerModule(JavaTimeModule())
-        disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-    }
+    private val mapper: ObjectMapper = XmlMapper.builder()
+        .defaultUseWrapper(false)
+        .build().apply {
+            registerKotlinModule()
+            registerModule(JavaTimeModule())
+            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        }
 
     @Throws(DatabindException::class)
     override fun <ResponseType : Any> read(url: URL, className: KClass<ResponseType>): ResponseType {
@@ -30,7 +32,8 @@ class JacksonReader(
             HttpRequest.newBuilder()
                 .uri(url.toURI())
                 .GET()
-                .build(), HttpResponse.BodyHandlers.ofString())
+                .build(), HttpResponse.BodyHandlers.ofString()
+        )
         logger.trace("Parsing content: {}", response.body())
         return try {
             mapper.readValue(response.body(), className.java)

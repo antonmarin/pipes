@@ -52,7 +52,7 @@ class TransmissionClientTest : TransmissionDependent {
         @Test
         fun `should change path and name of torrent`() {
             val existedId = client.add(
-                URI("https://cdimage.ubuntu.com/ubuntu-mate/releases/22.04/release/ubuntu-mate-22.04.4-desktop-amd64.iso.torrent"),
+                URI("https://github.com/antonmarin/pipes/raw/refs/heads/master/src/test/resources/ubuntu-mate-22.04.5-desktop-amd64.iso.torrent"),
                 "/someDir"
             )
             val gotTorrent = client.findOne(existedId) ?: fail("Unexpected behavior")
