@@ -1,0 +1,11 @@
+name: onpush
+on: [push] # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push
+jobs:
+  test:
+    name: Integration pipeline
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build
+        run: make build
