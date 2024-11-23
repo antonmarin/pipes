@@ -1,15 +1,12 @@
-name: manually
+name: release
 on: [workflow_dispatch] # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push
 jobs:
-  test:
+  tag:
     name: Publish by date
+    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Notify
-        if: ${{ github.ref != 'refs/heads/master' }}
-        run: echo "\\033[31mPublishing available only on master\\033[0m"
       - name: Tag
-        if: ${{ github.ref == 'refs/heads/master' }}
-        run: make TAG=$(date -I date) tag
+        run: git tag $(date -Idate)

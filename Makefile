@@ -50,6 +50,3 @@ publish: #? publish image to deploy to server
 	docker tag "$(DOCKER_IMAGE):$(TAG)" "antonmarin/$(DOCKER_IMAGE):$(PUBLIC_TAG)" \
 	&& docker push "antonmarin/$(DOCKER_IMAGE):$(PUBLIC_TAG)"
 	@echo "$(COLOR_CYAN)Published antonmarin/$(DOCKER_IMAGE):$(PUBLIC_TAG)$(COLOR_NONE)"
-
-tag:
-	git tag $(TAG)
