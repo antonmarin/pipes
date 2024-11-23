@@ -11,6 +11,7 @@ jobs:
       - name: Resolve TAG
         run: |
           export TAG=$(date -Idate)
+          echo "Resolved tag: $TAG"
           echo "TAG=$TAG" >> $GITHUB_ENV
       - name: Tag
         run: git tag $TAG
