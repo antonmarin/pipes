@@ -50,3 +50,8 @@ publish: #? publish image to deploy to server
 	docker tag "$(DOCKER_IMAGE):$(TAG)" "antonmarin/$(DOCKER_IMAGE):$(PUBLIC_TAG)" \
 	&& docker push "antonmarin/$(DOCKER_IMAGE):$(PUBLIC_TAG)"
 	@echo "$(COLOR_CYAN)Published antonmarin/$(DOCKER_IMAGE):$(PUBLIC_TAG)$(COLOR_NONE)"
+
+release: #? run manually to tag revision to publish. Write to master required
+	@read -p "Enter release version by pattern YYYY-0M-0D(-optionalIncrement) calver.org: " NAME; \
+	echo "tagging $$NAME"; \
+	git tag $$NAME && git push origin tag $$NAME && echo "Tag $$NAME pushed";
