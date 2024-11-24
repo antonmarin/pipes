@@ -10,5 +10,5 @@ jobs:
       - name: Build
         run: make build
       - name: Publish
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        if: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name == 'master'}}
         run: make PUBLIC_TAG=${{ github.ref_name }} publish
