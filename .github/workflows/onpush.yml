@@ -9,6 +9,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Build
         run: make build
+      - name: Log in to Docker Hub
+        uses: docker/login-action
+        with:
+          username: antonmarin
+          password: ${{ secrets.DOCKER_PUBLISH_TOKEN }}  
       - name: Publish
         if: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name == 'master'}}
         run: make PUBLIC_TAG=${{ github.ref_name }} publish
