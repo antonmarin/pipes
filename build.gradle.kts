@@ -28,11 +28,6 @@ dependencies {
     testImplementation ("org.testcontainers:testcontainers:1.19.7")
 }
 
-// verify quality
-tasks.test {
-    useJUnitPlatform()
-}
-
 // releasing
 tasks.build {
     dependsOn("shadowJar")
@@ -44,5 +39,13 @@ tasks.shadowJar {
     manifest {
         // Set entrypoint
         attributes["Main-Class"] = "ru.antonmarin.autoget.MainKt"
+    }
+}
+
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+        }
     }
 }

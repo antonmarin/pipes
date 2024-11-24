@@ -17,7 +17,7 @@ ENV DOCKER_HOST=$DOCKER_HOST
 # build application
 COPY ./src ./src
 COPY ./build.gradle.kts ./gradle.properties ./
-RUN /src/gradlew --no-daemon --warning-mode all build
+RUN /src/gradlew -q --no-daemon --warning-mode all build
 
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
