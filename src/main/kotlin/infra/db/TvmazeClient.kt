@@ -42,7 +42,7 @@ class TvmazeClient(@Suppress("unused") private val httpClient: HttpClient) : Aka
             .build()
         logger.trace("Sending request {}", request)
         val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
-        logger.debug("Received response {} with body\n{}", response, response.body())
+        logger.trace("Received response {} with body\n{}", response, response.body())
         return jsonMapper.readValue(response.body(), type.java)
     }
 

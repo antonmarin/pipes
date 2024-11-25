@@ -34,13 +34,17 @@ class AddAkasList(
     private val akasProvider: AkasProvider,
     private val input: TitlesProvider,
 ) : TitlesProvider {
-    override fun getTitles(): List<String> = input.getTitles()
-        .also { logger.trace("Adding akas to titles: {}", it) }
-        .flatMap {
-            val akas = akasProvider.getAkas(it)
-            logger.debug("found ${akas.size} akas for $it")
-            akas
-        } + input.getTitles()
+    override fun getTitles(): List<String> {
+        val titles = input.getTitles()
+            .also { logger.trace("Adding akas to titles: {}", it) }
+            .flatMap {
+                val akas = akasProvider.getAkas(it)
+                logger.debug("found {} akas for {}: {}", akas.size, it, akas)
+                akas
+            } + input.getTitles()
+
+        return titles
+    }
 
     companion object {
         private val logger = LoggerFactory.getLogger(AddAkasList::class.java)
