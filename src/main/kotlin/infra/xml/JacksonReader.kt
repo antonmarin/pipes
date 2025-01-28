@@ -1,5 +1,6 @@
 package ru.antonmarin.autoget.infra.xml
 
+import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DatabindException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -37,7 +38,7 @@ class JacksonReader(
         logger.trace("Parsing content: {}", response.body())
         return try {
             mapper.readValue(response.body(), className.java)
-        } catch (e: DatabindException) {
+        } catch (e: JsonProcessingException) {
             logger.debug("Failed deserializing response {}: {}", response, response.body())
             throw e
         }
