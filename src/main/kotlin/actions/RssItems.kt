@@ -14,11 +14,12 @@ class RssItems(
     val url: URL,
 ) : Action {
     override fun execute(entries: List<Entry>): List<Entry> {
+        //todo implement "get feed from since" logic
         return reader.read(url, RssFeed::class).channel.items.map {
             Entry(
                 title = it.title,
                 description = it.description,
-                torrentUri = it.magneturi, //todo how to customize source property?
+                torrentUri = it.enclosure?.url?.toURI(), //todo how to customize source property?
             )
         }
     }

@@ -66,7 +66,7 @@ fun main(args: Array<String>) {
                     PlexDiscoveryClient(httpClient, token = System.getenv("PLEX_TOKEN")) // refactor token to config
                         .let { titlesProvider -> AddAkasList(tvmazeClient, titlesProvider) }
                 ),
-                Modify(Entry::videoResolution, Entry::title, Regex("\\s(\\d+[pi])")),
+                Modify(Entry::videoResolution, Entry::title, Regex("\\|\\s\\w+\\s(\\d+[pi])")),
                 Modify(Entry::title, Entry::title, Regex("([^/]+)\\s/")),
                 AddTorrent(
                     client = transmissionClient,
