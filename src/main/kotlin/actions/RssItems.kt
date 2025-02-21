@@ -18,7 +18,7 @@ class RssItems(
         return reader.read(url, RssFeed::class).channel.items.map {
             Entry(
                 title = it.title,
-                description = it.description,
+                description = /*it.description*/ "",
                 torrentUri = it.enclosure?.url?.toURI(), //todo how to customize source property?
             )
         }
@@ -45,7 +45,7 @@ data class RssChannel(
 data class RssItem(
     val title: String,
     val link: URL,
-    val description: String,
+//    val description: String, description now used now but catch null some way
     val author: String?,
     val category: String?,
     val comments: URI?,
