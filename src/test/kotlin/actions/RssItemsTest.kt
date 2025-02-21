@@ -23,8 +23,8 @@ class RssItemsTest {
         val result = action.execute(emptyList())
 
         Assertions.assertThat(result).isEqualTo(listOf(
-            DataFactory.entry(title = rss1.title, description = rss1.description),
-            DataFactory.entry(title = rss2.title, description = rss2.description),
+            DataFactory.entry(title = rss1.title, description = /*rss1.description*/""),
+            DataFactory.entry(title = rss2.title, description = /*rss2.description*/""),
         ))
     }
 
@@ -39,7 +39,7 @@ class RssItemsTest {
         val result = action.execute(emptyList())
 
         Assertions.assertThat(result).isEqualTo(listOf(
-            DataFactory.entry(title = rss1.title, description = rss1.description, torrentUrl = rss1.magneturi),
+            DataFactory.entry(title = rss1.title, description = /*rss1.description*/"", torrentUrl = rss1.magneturi),
         ))
     }
 }

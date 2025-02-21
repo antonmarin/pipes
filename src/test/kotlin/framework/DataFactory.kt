@@ -31,7 +31,7 @@ object DataFactory {
     fun rssItem(
         title: String = "Some title",
         link: URL = URL("http://location"),
-        description: String = "",
+        @Suppress("UNUSED_PARAMETER") description: String = "",
         author: String? = null,
         category: String? = null,
         comments: URI? = null,
@@ -39,7 +39,7 @@ object DataFactory {
         guid: String? = null,
         magneturi: URI? = null,
     ) = RssItem(
-        title, link, description, author, category, comments, enclosure, guid, magneturi,
+        title, link, /*description,*/ author, category, comments, enclosure, guid, magneturi,
     )
 
     fun torrent(

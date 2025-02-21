@@ -41,7 +41,7 @@ build: clear #? build image
 	&& DOCKER_BUILDKIT=0 docker build \
 		--network=$(DOCKER_TEST_NETWORK) --build-arg "DOCKER_HOST=tcp://dind:$(DOCKER_DIND_PORT)" \
 		-t "$(DOCKER_IMAGE):$(TAG)" .; exit_code=$? \
-	$(MAKE) clear; exit $exit_code
+	$(MAKE) clear; exit ${exit_code}
 run: #? run once latest wip image
 	docker run --rm --env-file=.env --env "LOGGING_DOMAIN_ROOT_LEVEL=DEBUG" "$(DOCKER_IMAGE):$(TAG)" --once
 
