@@ -2,6 +2,7 @@ package ru.antonmarin.autoget.infra.plex
 
 import com.fasterxml.jackson.annotation.JsonMerge
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.slf4j.LoggerFactory
 import ru.antonmarin.autoget.actions.TitlesProvider
 import ru.antonmarin.autoget.infra.xml.JacksonReader
 import java.net.URL
@@ -15,6 +16,9 @@ class PlexDiscoveryClient(
 
     fun getWatchListTitles(): List<String> {
         val watchListMap = xmlReader.read(URL("$WATCH_LIST_URL?X-Plex-Token=$token"), WatchList::class)
+        watchListMap.directories.forEach {
+            if(it.banner == null) logger.warn("No banner in directory: $it")
+        }
 
         return watchListMap.directories.flatMap { listOfNotNull(it.title, it.originalTitle) }
     }
@@ -22,6 +26,7 @@ class PlexDiscoveryClient(
     override fun getTitles(): List<String> = getWatchListTitles()
 
     companion object {
+        private val logger = LoggerFactory.getLogger(PlexDiscoveryClient::class.java)
         private const val WATCH_LIST_URL = "https://discover.provider.plex.tv/library/sections/watchlist/all"
     }
 
@@ -30,7 +35,7 @@ class PlexDiscoveryClient(
         val originalTitle: String?,
         val slug: String,
         val art: URL,
-        val banner: URL,
+        val banner: URL?,
         val thumb: URL,
         val publicPagesURL: URL,
         val type: String,
