@@ -12,16 +12,20 @@ import org.testcontainers.utility.DockerImageName
  */
 interface HttpServiceDependent {
 
-    fun mockResponse(path: String, responseBody: String): String {
+    fun mockResponse(path: String, responseBody: String, statusCode: Int = 200): String {
         client
             .`when`(request(path))
-            .respond(response().withBody(responseBody))
+            .respond(
+                response()
+                    .withStatusCode(statusCode)
+                    .withBody(responseBody)
+            )
 
-        return server.endpoint+path
+        return server.endpoint + path
     }
 
     @BeforeEach
-    fun resetStubs(){
+    fun resetStubs() {
         client.reset()
     }
 
