@@ -47,5 +47,16 @@ class PipelineTest {
             Assertions.assertThat(capturedAction1Input.captured).isEqualTo(inputEntries)
             Assertions.assertThat(capturedAction2Input.captured).isEqualTo(a1output)
         }
+
+        @Test
+        fun `should not fail when action exception`() {
+            val actionThrowsException = mockk<Action>()
+            every { actionThrowsException.execute(any()) } throws RuntimeException("Should not be thrown")
+
+            val pipeline = Pipeline(listOf(actionThrowsException))
+            Assertions.assertThatCode {
+                pipeline.execute()
+            }.doesNotThrowAnyException()
+        }
     }
 }
