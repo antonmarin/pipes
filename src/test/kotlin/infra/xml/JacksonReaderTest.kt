@@ -4,16 +4,32 @@ import com.fasterxml.jackson.databind.DatabindException
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import ru.antonmarin.autoget.framework.DataFactory
 import ru.antonmarin.autoget.actions.Enclosure
 import ru.antonmarin.autoget.actions.RssChannel
 import ru.antonmarin.autoget.actions.RssFeed
+import ru.antonmarin.autoget.actions.contracts.XmlReader
+import ru.antonmarin.autoget.framework.DataFactory
 import ru.antonmarin.autoget.framework.HttpServiceDependent
 import java.net.URI
 import java.net.URL
 
 class JacksonReaderTest : HttpServiceDependent {
     private val reader = JacksonReader()
+
+    @Nested
+    inner class ReadTest {
+        @Test
+        fun `should exception when received non 2xx response`() {
+            val responseBody = "{\"error\":{\"code\":504,\"message\":\"Gateway Timeout\"}}"
+            val statusCode = 500
+            val absUrl = mockResponse("/rss", responseBody, statusCode)
+
+            Assertions.assertThatThrownBy {
+                reader.read(URL(absUrl), TestResponse::class)
+            }.isInstanceOf(XmlReader.ResponseNotSuccess::class.java)
+                .hasMessage("Received response with code $statusCode and body: $responseBody")
+        }
+    }
 
     @Nested
     inner class RssTest {
@@ -52,7 +68,7 @@ class JacksonReaderTest : HttpServiceDependent {
                                     title = "Принц демонов дома Момочи / серии: 1-10 [WEBRip 1080p] / Momochi-san Chi no Ayakashi Ouji",
                                     link = URL("https://tv3.someurl.it/release/momochi-san-chi-no-ayakashi-ouji"),
                                     description = "В день своего шестнадцатилетия сирота Химари Момочи получает прекрасное поместье своих покойных родителей. Для девушки, которая выросла в приюте, это стало замечательной новостью, ведь у неё наконец-то появился собственный уютный уголок, где можно чувствовать себя как дома.\n" +
-                                            "Но если бы всё было так просто! На самом деле, это поместье существует на границе между человеческим и духовным мирами, а сама девушка, будучи его хозяйкой, призвана выступать в качестве хранителя этой границы. Но и это ещё не всё! Как оказалось, в её будущем жилище незаконно поселились трое парней-красавчиков, и теперь они заявляют, что это их дом, а ей лучше бы убираться оттуда подобру-поздорову!<br><br>",
+                                        "Но если бы всё было так просто! На самом деле, это поместье существует на границе между человеческим и духовным мирами, а сама девушка, будучи его хозяйкой, призвана выступать в качестве хранителя этой границы. Но и это ещё не всё! Как оказалось, в её будущем жилище незаконно поселились трое парней-красавчиков, и теперь они заявляют, что это их дом, а ей лучше бы убираться оттуда подобру-поздорову!<br><br>",
                                     enclosure = Enclosure(
                                         url = URL("https://redirect.asdf.it/upload/torrents/27892.torrent"),
                                         length = 15057857801,

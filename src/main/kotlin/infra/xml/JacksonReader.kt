@@ -35,6 +35,13 @@ class JacksonReader(
                 .GET()
                 .build(), HttpResponse.BodyHandlers.ofString()
         )
+
+        if (response.statusCode() !in 200..299) {
+            throw XmlReader.ResponseNotSuccess(
+                "Received response with code ${response.statusCode()} and body: ${response.body()}"
+            )
+        }
+
         logger.trace("Parsing content: {}", response.body())
         return try {
             mapper.readValue(response.body(), className.java)

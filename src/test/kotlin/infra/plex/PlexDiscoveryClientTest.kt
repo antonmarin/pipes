@@ -3,9 +3,11 @@ package ru.antonmarin.autoget.infra.plex
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.net.http.HttpClient
+import java.net.http.HttpResponse
 
 class PlexDiscoveryClientTest {
     private val httpClient = mockk<HttpClient>()
@@ -13,6 +15,13 @@ class PlexDiscoveryClientTest {
 
     @Nested
     inner class GetWatchListTitlesTest {
+        private val response: HttpResponse<String> = mockk()
+
+        @BeforeEach
+        fun resetStubs() {
+            every { response.statusCode() } returns 200
+            every { httpClient.send<String>(any(), any()) } returns response
+        }
         @Test
         fun `should return titles list when success response`() {
             val responseBody =
@@ -23,9 +32,7 @@ class PlexDiscoveryClientTest {
                 <Directory art="https://image.tmdb.org/t/p/original/3sOWWRpSEGrljd8O50KLmOIdIPn.jpg" banner="https://artworks.thetvdb.com/banners/v4/series/423601/banners/65a0707d0a0aa.jpg" guid="plex://show/6301d4122bd2c2b545c7a7fc" key="/library/metadata/6301d4122bd2c2b545c7a7fc/children" rating="6.5" ratingKey="6301d4122bd2c2b545c7a7fc" studio="TBS" type="show" thumb="https://image.tmdb.org/t/p/original/ooSzpaJkU8MnfuLKn0IThcACv57.jpg" addedAt="1705017600" duration="1440000" publicPagesURL="https://watch.plex.tv/show/witch-and-the-beast" slug="witch-and-the-beast" userState="0" title="The Witch and the Beast" leafCount="12" childCount="1" isContinuingSeries="1" contentRating="TV-14" originallyAvailableAt="2024-01-12" year="2024" ratingImage="imdb://image.rating" imdbRatingCount="318" source="provider://tv.plex.provider.metadata"><Image alt="The Witch and the Beast" type="background" url="https://image.tmdb.org/t/p/original/3sOWWRpSEGrljd8O50KLmOIdIPn.jpg"/><Image alt="The Witch and the Beast" type="banner" url="https://artworks.thetvdb.com/banners/v4/series/423601/banners/65a0707d0a0aa.jpg"/><Image alt="The Witch and the Beast" type="coverArt" url="https://metadata-static.plex.tv/b/gracenote/b0517af5c24bee08e2806d5668afc6f8.jpg"/><Image alt="The Witch and the Beast" type="coverPoster" url="https://image.tmdb.org/t/p/original/ooSzpaJkU8MnfuLKn0IThcACv57.jpg"/><Image alt="The Witch and the Beast" type="coverSquare" url="https://metadata-static.plex.tv/6/gracenote/6b16e864273ae8c1abc345e9add5496b.jpg"/></Directory>
                 </MediaContainer>
             """.trimIndent()
-            every { httpClient.send<String>(any(), any()) } returns mockk {
-                every { body() } returns responseBody
-            }
+            every { response.body() } returns responseBody
 
             val titles = client.getWatchListTitles()
 
@@ -46,9 +53,7 @@ class PlexDiscoveryClientTest {
                 <Directory art="https://image.tmdb.org/t/p/original/3sOWWRpSEGrljd8O50KLmOIdIPn.jpg" banner="https://artworks.thetvdb.com/banners/v4/series/423601/banners/65a0707d0a0aa.jpg" guid="plex://show/6301d4122bd2c2b545c7a7fc" key="/library/metadata/6301d4122bd2c2b545c7a7fc/children" rating="6.5" ratingKey="6301d4122bd2c2b545c7a7fc" studio="TBS" type="show" thumb="https://image.tmdb.org/t/p/original/ooSzpaJkU8MnfuLKn0IThcACv57.jpg" addedAt="1705017600" duration="1440000" publicPagesURL="https://watch.plex.tv/show/witch-and-the-beast" slug="witch-and-the-beast" userState="0" title="The Witch and the Beast" originalTitle="魔女と野獣" leafCount="12" childCount="1" isContinuingSeries="1" contentRating="TV-14" originallyAvailableAt="2024-01-12" year="2024" ratingImage="imdb://image.rating" imdbRatingCount="318" source="provider://tv.plex.provider.metadata"><Image alt="The Witch and the Beast" type="background" url="https://image.tmdb.org/t/p/original/3sOWWRpSEGrljd8O50KLmOIdIPn.jpg"/><Image alt="The Witch and the Beast" type="banner" url="https://artworks.thetvdb.com/banners/v4/series/423601/banners/65a0707d0a0aa.jpg"/><Image alt="The Witch and the Beast" type="coverArt" url="https://metadata-static.plex.tv/b/gracenote/b0517af5c24bee08e2806d5668afc6f8.jpg"/><Image alt="The Witch and the Beast" type="coverPoster" url="https://image.tmdb.org/t/p/original/ooSzpaJkU8MnfuLKn0IThcACv57.jpg"/><Image alt="The Witch and the Beast" type="coverSquare" url="https://metadata-static.plex.tv/6/gracenote/6b16e864273ae8c1abc345e9add5496b.jpg"/></Directory>
                 </MediaContainer>
             """.trimIndent()
-            every { httpClient.send<String>(any(), any()) } returns mockk {
-                every { body() } returns responseBody
-            }
+            every { response.body() } returns responseBody
 
             val titles = client.getWatchListTitles()
 
@@ -72,9 +77,7 @@ class PlexDiscoveryClientTest {
                 <Directory art="https://image.tmdb.org/t/p/original/3nmDXGCDcHbtP3Rw4vi9RD3cmmX.jpg" banner="https://artworks.thetvdb.com/banners/v4/series/420280/banners/65babe633cd78.jpg" guid="plex://show/62866cfebf6db0dac5cdaee6" key="/library/metadata/62866cfebf6db0dac5cdaee6/children" primaryExtraKey="/library/metadata/62866cfebf6db0dac5cdaee6/extras/65d3d956f334bfa3a927ebb9" rating="8" ratingKey="62866cfebf6db0dac5cdaee6" studio="E&amp;H production" type="show" thumb="https://image.tmdb.org/t/p/original/3dl7QFrpvtu9My4L6K7KtUMP8p1.jpg" addedAt="1707523200" duration="1380000" publicPagesURL="https://watch.plex.tv/show/ninja-kamui" slug="ninja-kamui" userState="0" title="Ninja Kamui" leafCount="13" childCount="1" isContinuingSeries="1" contentRating="TV-MA" originallyAvailableAt="2024-02-10" year="2024" ratingImage="imdb://image.rating" imdbRatingCount="4700" source="provider://tv.plex.provider.metadata"><Image alt="Ninja Kamui" type="background" url="https://image.tmdb.org/t/p/original/3nmDXGCDcHbtP3Rw4vi9RD3cmmX.jpg"/><Image alt="Ninja Kamui" type="banner" url="https://artworks.thetvdb.com/banners/v4/series/420280/banners/65babe633cd78.jpg"/><Image alt="Ninja Kamui" type="clearLogo" url="https://metadata-static.plex.tv/b/009125463f/b476240b40158fd4b3c97768964a76c5.png"/><Image alt="Ninja Kamui" type="clearLogoWide" url="https://metadata-static.plex.tv/b/009125463f/b476240b40158fd4b3c97768964a76c5.png"/><Image alt="Ninja Kamui" type="coverArt" url="https://metadata-static.plex.tv/6/gracenote/65d94214c474f120de9589fe1a1b1fc0.jpg"/><Image alt="Ninja Kamui" type="coverPoster" url="https://image.tmdb.org/t/p/original/3dl7QFrpvtu9My4L6K7KtUMP8p1.jpg"/><Image alt="Ninja Kamui" type="coverSquare" url="https://metadata-static.plex.tv/c/gracenote/c22723458f882b68e2fba2113f709bfc.jpg"/></Directory>
                 </MediaContainer>
             """.trimIndent()
-            every { httpClient.send<String>(any(), any()) } returns mockk {
-                every { body() } returns responseBody
-            }
+            every { response.body() } returns responseBody
 
             val titles = client.getWatchListTitles()
 
