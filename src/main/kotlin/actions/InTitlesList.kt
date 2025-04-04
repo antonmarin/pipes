@@ -39,11 +39,13 @@ class AddAkasList(
             .also { logger.trace("Adding akas to titles: {}", it) }
             .flatMap {
                 val akas = akasProvider.getAkas(it)
-                logger.debug("found {} akas for {}: {}", akas.size, it, akas)
+                logger.trace("found {} akas for {}: {}", akas.size, it, akas)
                 akas
             } + input.getTitles()
 
-        return titles
+        return titles.also {
+            logger.debug("Added akas. Total titles: {}", it)
+        }
     }
 
     companion object {

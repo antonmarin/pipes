@@ -17,8 +17,6 @@ class RegExp(
                 val value = property.getValue(it, property) ?: return@filter false
 
                 anyExpr.any { regex -> regex.containsMatchIn(value) }
-            }.also {
-                logger.debug("Filtered values: {}", it.map { "\n" + property.getValue(it, property)!!.replace("\\s+".toRegex(), " ") })
             }
 
             Action.REJECT -> entries.filterNot {

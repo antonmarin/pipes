@@ -20,7 +20,9 @@ class PlexDiscoveryClient(
             if(it.banner == null) logger.warn("No banner in directory: $it")
         }
 
-        return watchListMap.directories.flatMap { listOfNotNull(it.title, it.originalTitle) }
+        return watchListMap.directories.flatMap { listOfNotNull(it.title, it.originalTitle) }.also {
+            logger.debug("WatchList: {}", it)
+        }
     }
 
     override fun getTitles(): List<String> = getWatchListTitles()

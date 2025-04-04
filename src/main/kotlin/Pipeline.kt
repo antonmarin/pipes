@@ -10,7 +10,7 @@ class Pipeline(private val actions: Collection<Action>) {
             logger.trace("Executing action {} with entries {}", it, previousEntries)
             try {
                 previousEntries = it.execute(previousEntries)
-                logger.trace("Action {} finished with entries {}", it, previousEntries)
+                logger.debug("Action {} finished with entries {}", it, previousEntries)
             } catch (ex: Throwable) {
                 logger.error("Pipeline failed with exception", ex)
             }
