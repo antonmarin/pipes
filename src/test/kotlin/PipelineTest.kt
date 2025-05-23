@@ -50,13 +50,32 @@ class PipelineTest {
 
         @Test
         fun `should not fail when action exception`() {
-            val actionThrowsException = mockk<Action>()
-            every { actionThrowsException.execute(any()) } throws RuntimeException("Should not be thrown")
+            val actionThrowsException = mockk<Action>{
+                every { execute(any()) } throws RuntimeException("Should not be thrown")
+            }
 
             val pipeline = Pipeline(listOf(actionThrowsException))
             Assertions.assertThatCode {
                 pipeline.execute()
             }.doesNotThrowAnyException()
+        }
+
+        @Test
+        fun `should stop execution when action exception`() {
+            val actionThrowsException = mockk<Action> {
+                every { execute(any()) } throws RuntimeException("Expected exception")
+            }
+            var nextWasExecuted = false
+            val actionNormal = mockk<Action> {
+                every { execute(any()) } answers {
+                    nextWasExecuted = true
+                    emptyList()
+                }
+            }
+
+            Pipeline(listOf(actionThrowsException, actionNormal)).execute()
+
+            Assertions.assertThat(nextWasExecuted).isFalse()
         }
     }
 }

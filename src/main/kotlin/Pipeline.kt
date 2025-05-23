@@ -13,6 +13,7 @@ class Pipeline(private val actions: Collection<Action>) {
                 logger.debug("Action {} finished with entries {}", it, previousEntries)
             } catch (ex: Throwable) {
                 logger.error("Pipeline failed with exception", ex)
+                return
             }
         }
     }
