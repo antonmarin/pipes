@@ -10,16 +10,27 @@ import ru.antonmarin.autoget.framework.DataFactory
 class InTitlesListTest {
     @Nested
     inner class InTitlesListTest {
+        private val titlesProvider = mockk<TitlesProvider>()
+        private val action = InTitlesList(titlesProvider)
+
         @Test
         fun `should filter entries when title contains`() {
-            val titlesProvider = mockk<TitlesProvider>()
             every { titlesProvider.getTitles() } returns listOf("Some title")
-            val entry = DataFactory.entry(title = "Some title HEVC")
 
-            val action = InTitlesList(titlesProvider)
+            val entry = DataFactory.entry(title = "Some title HEVC")
             val filtered = action.execute(listOf(entry))
 
             Assertions.assertThat(filtered).isEqualTo(listOf(entry))
+        }
+
+        @Test
+        fun `should filter nothing when no titles`() {
+            every { titlesProvider.getTitles() } returns emptyList()
+
+            val entry = DataFactory.entry(title = "Some title HEVC")
+            val filtered = action.execute(listOf(entry))
+
+            Assertions.assertThat(filtered).isEmpty()
         }
     }
 
