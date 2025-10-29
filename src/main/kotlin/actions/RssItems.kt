@@ -44,7 +44,7 @@ data class RssChannel(
  */
 data class RssItem(
     val title: String,
-    val link: URL,
+    val link: URL?, // not everyone implement required
 //    val description: String, description now used now but catch null some way
     val author: String?,
     val category: String?,
