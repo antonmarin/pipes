@@ -29,17 +29,26 @@ DOCKER_IMAGE:=autoget
 TAG:=$(shell git rev-parse --short HEAD)
 DOCKER_TEST_NETWORK:="test-network"
 DOCKER_DIND_PORT:=2375
+BUILDX:="mybuilder"
 
 clear:
+	docker buildx rm $(BUILDX); \
 	docker stop dind; \
 	docker network rm $(DOCKER_TEST_NETWORK) || exit 0;
 build: clear #? build image
-	docker network create $(DOCKER_TEST_NETWORK) \
+	docker buildx create \
+		--name $(BUILDX) \
+		--driver docker-container \
+		--driver-opt "network=$(DOCKER_TEST_NETWORK)" \
+		--use \
+	&& docker network create $(DOCKER_TEST_NETWORK) \
 	&& docker run --rm --privileged -d --name dind -p $(DOCKER_DIND_PORT):2375 \
         --network $(DOCKER_TEST_NETWORK) --network-alias dind \
         -e DOCKER_TLS_CERTDIR="" docker:dind \
-	&& DOCKER_BUILDKIT=0 docker build \
-		--network=$(DOCKER_TEST_NETWORK) --build-arg "DOCKER_HOST=tcp://dind:$(DOCKER_DIND_PORT)" \
+	&& docker buildx build --load \
+		--builder $(BUILDX) \
+		--platform linux/amd64 \
+		--build-arg "DOCKER_HOST=tcp://dind:$(DOCKER_DIND_PORT)" \
 		-t "$(DOCKER_IMAGE):$(TAG)" .; exit_code=$? \
 	$(MAKE) clear; exit ${exit_code}
 run: #? run once latest wip image

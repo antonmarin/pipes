@@ -12,6 +12,8 @@ repositories {
 }
 
 dependencies {
+    api(kotlin("stdlib", "1.9.22"))
+
     // logger
     api("org.slf4j:slf4j-api:[2.0,3.0)!!2.0.9")
 
