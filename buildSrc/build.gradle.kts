@@ -9,5 +9,10 @@ repositories {
 dependencies {
     // https://docs.gradle.org/current/userguide/custom_plugins.html#applying_external_plugins_in_precompiled_script_plugins
     // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.20")
+}
+configurations.all {
+    resolutionStrategy {
+        force("org.jetbrains.kotlin:kotlin-stdlib:2.1.20")
+    }
 }

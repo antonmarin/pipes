@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-alpine AS builder
+FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /src
 
 # install gradle
@@ -19,7 +19,7 @@ COPY ./src ./src
 COPY ./build.gradle.kts ./gradle.properties ./
 RUN /src/gradlew --no-daemon --warning-mode all build
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # install application

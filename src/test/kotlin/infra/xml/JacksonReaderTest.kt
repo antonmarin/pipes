@@ -11,7 +11,6 @@ import ru.antonmarin.autoget.actions.contracts.XmlReader
 import ru.antonmarin.autoget.framework.DataFactory
 import ru.antonmarin.autoget.framework.HttpServiceDependent
 import java.net.URI
-import java.net.URL
 
 class JacksonReaderTest : HttpServiceDependent {
     private val reader = JacksonReader()
@@ -25,7 +24,7 @@ class JacksonReaderTest : HttpServiceDependent {
             val absUrl = mockResponse("/rss", responseBody, statusCode)
 
             Assertions.assertThatThrownBy {
-                reader.read(URL(absUrl), TestResponse::class)
+                reader.read(URI(absUrl).toURL(), TestResponse::class)
             }.isInstanceOf(XmlReader.ResponseNotSuccess::class.java)
                 .hasMessage("Received response with code $statusCode and body: $responseBody")
         }
@@ -37,7 +36,7 @@ class JacksonReaderTest : HttpServiceDependent {
         fun `should deserialize to requested class when responded`() {
             val absUrl = mockResponse("/rss", "<xml><title>response</title></xml>")
 
-            val response = reader.read(URL(absUrl), TestResponse::class)
+            val response = reader.read(URI(absUrl).toURL(), TestResponse::class)
 
             Assertions.assertThat(response).isEqualTo(TestResponse("response"))
         }
@@ -48,7 +47,7 @@ class JacksonReaderTest : HttpServiceDependent {
 
 
             Assertions.assertThatThrownBy {
-                reader.read(URL(absUrl), TestResponse::class)
+                reader.read(URI(absUrl).toURL(), TestResponse::class)
             }.isInstanceOf(DatabindException::class.java)
         }
 
@@ -56,7 +55,7 @@ class JacksonReaderTest : HttpServiceDependent {
         fun `should deserialize when response is non standard rss`() {
             val absUrl = mockResponse("/rss", RSS_NON_STANDARD)
 
-            val response = reader.read(URL(absUrl), RssFeed::class)
+            val response = reader.read(URI(absUrl).toURL(), RssFeed::class)
 
             Assertions.assertThat(response)
                 .usingRecursiveComparison()
@@ -66,11 +65,11 @@ class JacksonReaderTest : HttpServiceDependent {
                             listOf(
                                 DataFactory.rssItem(
                                     title = "Принц демонов дома Момочи / серии: 1-10 [WEBRip 1080p] / Momochi-san Chi no Ayakashi Ouji",
-                                    link = URL("https://tv3.someurl.it/release/momochi-san-chi-no-ayakashi-ouji"),
+                                    link = URI("https://tv3.someurl.it/release/momochi-san-chi-no-ayakashi-ouji").toURL(),
                                     description = "В день своего шестнадцатилетия сирота Химари Момочи получает прекрасное поместье своих покойных родителей. Для девушки, которая выросла в приюте, это стало замечательной новостью, ведь у неё наконец-то появился собственный уютный уголок, где можно чувствовать себя как дома.\n" +
                                         "Но если бы всё было так просто! На самом деле, это поместье существует на границе между человеческим и духовным мирами, а сама девушка, будучи его хозяйкой, призвана выступать в качестве хранителя этой границы. Но и это ещё не всё! Как оказалось, в её будущем жилище незаконно поселились трое парней-красавчиков, и теперь они заявляют, что это их дом, а ей лучше бы убираться оттуда подобру-поздорову!<br><br>",
                                     enclosure = Enclosure(
-                                        url = URL("https://redirect.asdf.it/upload/torrents/27892.torrent"),
+                                        url = URI("https://redirect.asdf.it/upload/torrents/27892.torrent").toURL(),
                                         length = 15057857801,
                                         type = "application/x-bittorrent",
                                     ),

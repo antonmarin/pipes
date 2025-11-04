@@ -1,6 +1,7 @@
 package ru.antonmarin.autoget.framework
 
 import org.testcontainers.containers.GenericContainer
+import java.net.URI
 import java.net.URL
 
 /**
@@ -22,7 +23,7 @@ interface TransmissionDependent {
                     .start()
             }
             @Suppress("HttpUrlsUsage")
-            return URL("http://${server.host}:${server.getMappedPort(TRANSMISSION_RPC_PORT)}/transmission/rpc")
+            return URI("http://${server.host}:${server.getMappedPort(TRANSMISSION_RPC_PORT)}/transmission/rpc").toURL()
         }
     }
 }
