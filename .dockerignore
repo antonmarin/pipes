@@ -1,7 +1,13 @@
+Dockerfile
+
+# app
 .env*
 config.yml
 .idea/
+Makefile
 
 # gradle in root and modules
 .gradle/
 build/
+buildSrc/.gradle
+buildSrc/build

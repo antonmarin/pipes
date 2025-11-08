@@ -4,20 +4,23 @@ WORKDIR /src
 # install gradle
 COPY ./gradle ./gradle
 COPY ./gradlew ./
-RUN ./gradlew --no-daemon help
+RUN ./gradlew --no-daemon --no-watch-fs help
 
 # build base module
 COPY ./buildSrc ./buildSrc
 COPY ./settings.gradle.kts ./
-RUN /src/gradlew --no-daemon buildSrc:build
+RUN ./gradlew --no-daemon --no-watch-fs buildSrc:build
 
-# setup dockerd for testcontainers
+# cache dependencies
+COPY ./build.gradle.kts ./gradle.properties ./
+RUN ./gradlew --no-daemon --no-watch-fs dependencies
+
+# setup dockerd for testcontainers and build application
 ARG DOCKER_HOST=""
 ENV DOCKER_HOST=$DOCKER_HOST
-# build application
+RUN echo $DOCKER_HOST && nc -zv 172.18.0.2 2375
 COPY ./src ./src
-COPY ./build.gradle.kts ./gradle.properties ./
-RUN /src/gradlew --no-daemon --warning-mode all build
+RUN ./gradlew --no-daemon --no-watch-fs --warning-mode all build
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
