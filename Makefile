@@ -33,14 +33,14 @@ DOCKER_DIND_PORT:=2375
 BUILDX:="mybuilder"
 DOCKER_CACHE_TO:=--load --provenance=false
 
-build: DIND_IP:=$(shell docker inspect -f '{{.NetworkSettings.Networks.$(DOCKER_TEST_NETWORK).IPAddress}}' dind)
 build: prepare-buildkit #? build image
-	docker buildx build --progress plain \
+	DIND_IP=$(shell docker inspect -f '{{.NetworkSettings.Networks.$(DOCKER_TEST_NETWORK).IPAddress}}' dind) \
+	&& docker buildx build --progress plain \
 		--builder $(BUILDX) \
 		--platform linux/amd64 \
 		--cache-from type=registry,ref="$(DOCKER_IMAGE_PUBLIC):cache" \
 		$(DOCKER_CACHE_TO) \
-		--build-arg "DOCKER_HOST=tcp://$(DIND_IP):$(DOCKER_DIND_PORT)" \
+		--build-arg "DOCKER_HOST=tcp://$$DIND_IP:$(DOCKER_DIND_PORT)" \
 		-t "$(DOCKER_IMAGE):$(TAG)" .
 
 clean:

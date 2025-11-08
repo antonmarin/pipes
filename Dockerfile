@@ -18,7 +18,6 @@ RUN ./gradlew --no-daemon --no-watch-fs dependencies
 # setup dockerd for testcontainers and build application
 ARG DOCKER_HOST=""
 ENV DOCKER_HOST=$DOCKER_HOST
-RUN echo $DOCKER_HOST && nc -zv 172.18.0.2 2375
 COPY ./src ./src
 RUN ./gradlew --no-daemon --no-watch-fs --warning-mode all build
 
