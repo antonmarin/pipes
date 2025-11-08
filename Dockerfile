@@ -1,25 +1,27 @@
-FROM eclipse-temurin:17-jdk-alpine AS builder
+FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /src
 
 # install gradle
 COPY ./gradle ./gradle
 COPY ./gradlew ./
-RUN ./gradlew --no-daemon help
+RUN ./gradlew --no-daemon --no-watch-fs help
 
 # build base module
 COPY ./buildSrc ./buildSrc
 COPY ./settings.gradle.kts ./
-RUN /src/gradlew --no-daemon buildSrc:build
+RUN ./gradlew --no-daemon --no-watch-fs buildSrc:build
 
-# setup dockerd for testcontainers
+# cache dependencies
+COPY ./build.gradle.kts ./gradle.properties ./
+RUN ./gradlew --no-daemon --no-watch-fs dependencies
+
+# setup dockerd for testcontainers and build application
 ARG DOCKER_HOST=""
 ENV DOCKER_HOST=$DOCKER_HOST
-# build application
 COPY ./src ./src
-COPY ./build.gradle.kts ./gradle.properties ./
-RUN /src/gradlew --no-daemon --warning-mode all build
+RUN ./gradlew --no-daemon --no-watch-fs --warning-mode all build
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # install application

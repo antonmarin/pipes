@@ -1,10 +1,9 @@
 // https://docs.gradle.org/current/userguide/custom_plugins.html#sec:precompiled_plugins
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm")/* version "1.9.22"*/
+    id("org.jetbrains.kotlin.jvm")
 }
 
 repositories {
@@ -12,6 +11,8 @@ repositories {
 }
 
 dependencies {
+    api(kotlin("stdlib"))
+
     // logger
     api("org.slf4j:slf4j-api:[2.0,3.0)!!2.0.9")
 
@@ -21,11 +22,8 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(17)
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
+    jvmToolchain(21) // update in Dockerfile too
+    compilerOptions {
         allWarningsAsErrors = true
     }
 }

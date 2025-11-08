@@ -21,7 +21,7 @@ import ru.antonmarin.autoget.server.configuration.ActionConfig
 import ru.antonmarin.autoget.server.configuration.ConfigActionFactory
 import ru.antonmarin.autoget.server.configuration.ConfigControllerFactory
 import ru.antonmarin.autoget.server.configuration.WhenConfig
-import java.net.URL
+import java.net.URI
 import java.net.http.HttpClient
 import java.time.Clock
 import java.time.Duration
@@ -32,7 +32,7 @@ fun main(args: Array<String>) {
     logger.debug("Starting with args {} at {}", args, clock)
 
     val httpClient = HttpClient.newBuilder().build()
-    val transmissionClient = TransmissionClient(URL(System.getenv("TRANSMISSION_BASEPATH") + "/transmission/rpc"), httpClient)
+    val transmissionClient = TransmissionClient(URI(System.getenv("TRANSMISSION_BASEPATH") + "/transmission/rpc").toURL(), httpClient)
     val tvmazeClient = TvmazeClient(httpClient)
     @Suppress("UNUSED_VARIABLE")
     val dic = DIContainer().apply {

@@ -9,7 +9,7 @@ import ru.antonmarin.autoget.server.Server
 import ru.antonmarin.autoget.server.ServerItem
 import ru.antonmarin.autoget.server.controller.OnceController
 import ru.antonmarin.autoget.server.controller.TimerController
-import java.net.URL
+import java.net.URI
 import java.time.Clock
 import java.time.Duration
 import kotlin.reflect.KProperty1
@@ -81,7 +81,8 @@ class ConfigActionFactory(
 ) {
     fun create(config: ActionConfig<out Action>): Action {
 //        config.values.keys.first().
-        return RssItems(xmlReader, URL(config.values[RssItems::url]))
+        val uri = config.values[RssItems::url] ?: throw RuntimeException("No rss url set")
+        return RssItems(xmlReader, URI(uri).toURL())
     }
 }
 class ActionConfig<T>(val values: Map<KProperty1<T, Any>, String> = emptyMap())

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.slf4j.LoggerFactory
 import ru.antonmarin.autoget.actions.TitlesProvider
 import ru.antonmarin.autoget.infra.xml.JacksonReader
+import java.net.URI
 import java.net.URL
 import java.net.http.HttpClient
 
@@ -15,7 +16,7 @@ class PlexDiscoveryClient(
     private val xmlReader = JacksonReader(httpClient)
 
     fun getWatchListTitles(): List<String> {
-        val watchListMap = xmlReader.read(URL("$WATCH_LIST_URL?X-Plex-Token=$token"), WatchList::class)
+        val watchListMap = xmlReader.read(URI("$WATCH_LIST_URL?X-Plex-Token=$token").toURL(), WatchList::class)
         watchListMap.directories.forEach {
             if(it.banner == null) logger.warn("No banner in directory: $it")
         }

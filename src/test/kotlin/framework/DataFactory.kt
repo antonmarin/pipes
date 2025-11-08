@@ -30,7 +30,7 @@ object DataFactory {
 
     fun rssItem(
         title: String = "Some title",
-        link: URL = URL("http://location"),
+        link: URL = URI("http://location").toURL(),
         @Suppress("UNUSED_PARAMETER") description: String = "",
         author: String? = null,
         category: String? = null,

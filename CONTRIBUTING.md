@@ -1,4 +1,4 @@
-use JDK 17
+use JDK 21
 
 # Goal
 
